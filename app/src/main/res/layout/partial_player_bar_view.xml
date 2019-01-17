@@ -1,0 +1,138 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraint_layout_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/player_playlist_item">
+
+        <com.lanltn.musicplayerservice.sample.PlayerSeekBarView
+            android:id="@+id/player_seek_bar"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/player_bar_view_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/player_seek_bar">
+
+            <ImageView
+                android:id="@+id/image_view_player_bar"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:contentDescription="@null"
+                android:scaleType="centerCrop"
+                android:src="@drawable/img_artist"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/shape_loading" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="8dp"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="@+id/image_view_player_bar"
+                app:layout_constraintEnd_toStartOf="@+id/image_view_player_bar_star"
+                app:layout_constraintStart_toEndOf="@+id/image_view_player_bar"
+                app:layout_constraintTop_toTopOf="@+id/image_view_player_bar">
+
+                <TextView
+                    android:id="@+id/text_view_player_bar_fes_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:alpha="0.7"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="FUJI ROCK FESTIVAL 2018"
+                    android:textColor="@color/white"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/text_view_player_bar_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/sf_ui_display_semibold"
+                    android:maxLines="1"
+                    android:text="FUJI ROCK FESTIVAL 2018"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/text_view_player_bar_sub_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:alpha="0.5"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/hiragino_sans_w5"
+                    android:maxLines="1"
+                    android:textColor="@color/white"
+                    android:textSize="8sp"
+                    tools:text="BOB DYLAN &amp; HIS BAND" />
+            </LinearLayout>
+
+            <View
+                android:id="@+id/view_toggle_fake_animation"
+                android:layout_width="65dp"
+                android:layout_height="0dp"
+                android:background="@drawable/shape_circle_white_70"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/image_view_player_toggle"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_marginRight="10dp"
+                android:contentDescription="@null"
+                android:padding="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/selector_player_toggle"
+                tools:ignore="RtlHardcoded" />
+
+            <ImageView
+                android:id="@+id/image_view_player_bar_star"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/selector_ripple"
+                android:contentDescription="@null"
+                android:padding="10dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/image_view_player_toggle"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/selector_star_toggle" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+</merge>

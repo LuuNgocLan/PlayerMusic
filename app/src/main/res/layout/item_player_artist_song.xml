@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:vumeter="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/player_artist_constraint_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/transparent">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/player_artist_view_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/rounded_container_bg"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/player_artist_image_view"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:contentDescription="@null"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/shape_loading" />
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="@+id/player_artist_image_view"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/player_artist_image_view"
+            app:layout_constraintTop_toTopOf="@+id/player_artist_image_view">
+
+            <TextView
+                android:id="@+id/player_artist_text_view_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_alignParentLeft="true"
+                android:layout_toLeftOf="@+id/image_equalizer"
+                android:ellipsize="end"
+                android:layout_marginRight="4dp"
+                android:fontFamily="@font/sf_ui_display_semibold"
+                android:maxLines="1"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                tools:text="FUJI ROCK FESTIVAL 2018" />
+
+            <TextView
+                android:id="@+id/player_artist_text_view_sub_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginRight="4dp"
+                android:layout_toLeftOf="@+id/image_equalizer"
+                android:alpha="0.5"
+                android:ellipsize="end"
+                android:fontFamily="@font/sf_ui_display_semibold"
+                android:maxLines="1"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                tools:text="BOB DYLAN &amp; HIS BAND" />
+
+            <io.gresse.hugo.vumeterlibrary.VuMeterView
+                android:id="@+id/image_equalizer"
+                android:layout_width="20dp"
+                android:layout_height="21dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                vumeter:vumeter_stopSize="5dp"
+                vumeter:vumeter_speed="8"
+                vumeter:vumeter_blockNumber="4"
+                vumeter:vumeter_blockSpacing="1dp"
+                vumeter:vumeter_backgroundColor="@color/white"
+                vumeter:vumeter_startOff="false"/>
+
+        </RelativeLayout>
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.constraint.ConstraintLayout>

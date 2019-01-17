@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+
+    <color name="player_playlist_item">#111111</color>
+    <color name="transparent">#00000000</color>
+    <color name="dark_gray">#696969</color>
+    <color name="white">#ffffff</color>
+    <color name="white_70">#b3ffffff</color>
+    <color name="black">#000000</color>
+    <color name="home_background">#161616</color>
+    <color name="white_50">#80ffffff</color>
+    <color name="bg_overview_empty">#111111</color>
+    <color name="pink">#FC6389</color>
+    <color name="rounded_container_bg">#222222</color>
+</resources>

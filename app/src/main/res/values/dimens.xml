@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="standard_height_bar">48dp</dimen>
+    <dimen name="pl10_padding_bottom">34dp</dimen>
+    <dimen name="standard_status_bar">24dp</dimen>
+</resources>
