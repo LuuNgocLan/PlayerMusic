@@ -30,8 +30,8 @@ public class PlayerSeekBarView extends LinearLayout {
 
     private void init(Context context) {
         mViewRoot = inflate(context,R.layout.partial_custom_seekbar_view,this);
-        seekBar = mViewRoot.findViewById(R.id.seek_bar);
-        clContainer = mViewRoot.findViewById(R.id.constraint_layout_container);
+//        seekBar = mViewRoot.findViewById(R.id.seek_bar);
+//        clContainer = mViewRoot.findViewById(R.id.constraint_layout_container);
        // setEvent();
     }
 

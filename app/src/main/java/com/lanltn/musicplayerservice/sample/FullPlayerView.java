@@ -5,15 +5,20 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.lanltn.musicplayerservice.MainActivity;
 import com.lanltn.musicplayerservice.R;
 import com.lanltn.musicplayerservice.adapter.PlayerSlideShowAdapter;
+import com.lanltn.musicplayerservice.adapter.PlaylistArtistAdapter;
 import com.lanltn.musicplayerservice.model.Song;
 import com.lanltn.musicplayerservice.utils.AppUtils;
 import com.lanltn.musicplayerservice.utils.ScreenUtils;
@@ -26,8 +31,8 @@ import java.util.List;
 public class FullPlayerView extends RelativeLayout
         implements
         IFullPlayerView,
-        PlayerSlideShowAdapter.ISlideShowViewHolderListener
-{
+        PlayerSlideShowAdapter.ISlideShowViewHolderListener,
+        PlaylistArtistAdapter.IPlayListViewHolderListener {
 
     View mViewRoot;
     ConstraintLayout clContainer;
@@ -57,11 +62,18 @@ public class FullPlayerView extends RelativeLayout
 
     private IPlayerComponentView iPlayerComponentView;
     private PlayerSlideShowAdapter mPlayerSlideShowAdapter;
+    private PlaylistArtistAdapter mPlaylistArtistAdapter;
     private List<Song> mListSong = new ArrayList<>();
+
     private int mLastPage;
+    private boolean mIsShowSlide = true;
 
     public void setiPlayerComponentView(IPlayerComponentView iPlayerComponentView) {
         this.iPlayerComponentView = iPlayerComponentView;
+        this.mListSong = iPlayerComponentView.getDataInputSong();
+        initSlideShow();
+        initPlayListArtist();
+        Toast.makeText(getContext(), "FULL_VIEW: " + mListSong.size(), Toast.LENGTH_SHORT).show();
     }
 
     public FullPlayerView(Context context) {
@@ -80,6 +92,11 @@ public class FullPlayerView extends RelativeLayout
     }
 
     private void init(Context context) {
+        inflateView(context);
+        setUpEvent();
+    }
+
+    private void inflateView(Context context) {
         mViewRoot = inflate(context, R.layout.partial_player_full_view, this);
         clContainer = mViewRoot.findViewById(R.id.constraint_layout_container);
         mClController = mViewRoot.findViewById(R.id.player_contraint_layout_controller);
@@ -105,18 +122,17 @@ public class FullPlayerView extends RelativeLayout
         mLinearLayoutPlaylist = mViewRoot.findViewById(R.id.player_full_linear_playlist);
         artistPlayView = mViewRoot.findViewById(R.id.artist_view_play);
         imgViewClose = mViewRoot.findViewById(R.id.image_view_close);
-        setUpEvent();
-        initSlideShow();
-        initPlayListArtist();
     }
 
     private void initPlayListArtist() {
-
+        mPlaylistArtistAdapter = new PlaylistArtistAdapter(getContext(), mListSong);
+        mPlaylistArtistAdapter.setmViewHolderListener(this);
+        mPlayerRecyclerView.setAdapter(mPlaylistArtistAdapter);
     }
 
+
     private void initSlideShow() {
-        fakeData();
-        mPlayerSlideShowAdapter = new PlayerSlideShowAdapter(getContext(),mListSong);
+        mPlayerSlideShowAdapter = new PlayerSlideShowAdapter(getContext(), mListSong);
         mPlayerSlideShowAdapter.setmViewHolderListener(this);
         mSlideShowPlayer.setAdapter(mPlayerSlideShowAdapter);
         mSlideShowPlayer.scrollToPosition(0);
@@ -156,6 +172,19 @@ public class FullPlayerView extends RelativeLayout
                 iPlayerComponentView.onMiniPlayerMode();
             }
         });
+
+        mLinearLayoutPlaylist.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "GONE Slide: " + mIsShowSlide, Toast.LENGTH_SHORT).show();
+                mIsShowSlide = !mIsShowSlide;
+                if (mIsShowSlide) {
+                    mSlideShowPlayer.setVisibility(VISIBLE);
+                } else {
+                    mSlideShowPlayer.setVisibility(GONE);
+                }
+            }
+        });
     }
 
     private void showFullPlayer() {
@@ -174,15 +203,5 @@ public class FullPlayerView extends RelativeLayout
 
     interface IPlayerFullListener extends IBasePlayer {
 
-    }
-
-    public void fakeData(){
-        mListSong.add(new Song());
-        mListSong.add(new Song());
-        mListSong.add(new Song());
-        mListSong.add(new Song());
-        mListSong.add(new Song());
-        mListSong.add(new Song());
-        mListSong.add(new Song());
     }
 }

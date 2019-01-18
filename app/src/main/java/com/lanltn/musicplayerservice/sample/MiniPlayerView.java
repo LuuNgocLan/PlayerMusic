@@ -10,7 +10,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.lanltn.musicplayerservice.model.Artist;
+import com.lanltn.musicplayerservice.model.Song;
 import com.lanltn.musicplayerservice.utils.AnimationUtils;
 import com.lanltn.musicplayerservice.R;
 
@@ -35,6 +38,7 @@ public class MiniPlayerView extends RelativeLayout implements IMiniPlayerView {
     private int hardHeightOfTabBar;
     private boolean mIsShowing = false;
     private boolean mIsPlaying = false;
+    private boolean mIsPaused = false;
 
     public void setiPlayerComponentView(IPlayerComponentView iPlayerComponentView) {
         this.iPlayerComponentView = iPlayerComponentView;
@@ -96,6 +100,8 @@ public class MiniPlayerView extends RelativeLayout implements IMiniPlayerView {
                 mIsPlaying = !mIsPlaying;
                 iPlayerComponentView.setStatusPlayer(mIsPlaying);
                 setSelectedTogglePlayerView(mIsPlaying);
+                setSongInfo(new Song());
+                iPlayerComponentView.onPlayingMusic();
 
             }
         });
@@ -115,13 +121,22 @@ public class MiniPlayerView extends RelativeLayout implements IMiniPlayerView {
     }
 
     /**
-     * update seek bar
-     * update length
      * update name Artist, name fes, name Music
      * update image Artist
      */
-    public void setdataToview(){
+    public void setSongInfo(Song song) {
+        txtPlayerBarTitle.setText(song.getmTitle());
+        Artist artist = song.getmArtist();
+        if (artist != null) {
+            mArtist = artist;
+            txtPlayerBarSubTitle.setText(artist.getmNameArtist());
 
+            Glide
+                    .with(getContext())
+                    .load(artist.getmImageUrl())
+                    .apply((new RequestOptions()).error(R.drawable.img_artist))
+                    .into(imgPlayerBar);
+        }
     }
 
     interface IMiniPlayerListener extends IBasePlayer {
