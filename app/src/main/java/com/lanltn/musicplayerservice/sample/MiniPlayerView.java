@@ -3,8 +3,12 @@ package com.lanltn.musicplayerservice.sample;
 import android.content.Context;
 import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.Fragment;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -12,13 +16,18 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.lanltn.musicplayerservice.MainActivity;
 import com.lanltn.musicplayerservice.model.Artist;
 import com.lanltn.musicplayerservice.model.Song;
 import com.lanltn.musicplayerservice.utils.AnimationUtils;
 import com.lanltn.musicplayerservice.R;
+import com.lanltn.musicplayerservice.utils.AppUtils;
 
 public class MiniPlayerView extends RelativeLayout implements IMiniPlayerView {
+    private final int SCROLL_ACCELERATION = 1;
+    private static final int ESTIMATE_DEFAULT_HEIGHT = 500;
 
+    private GestureDetector mGestureDetector;
     View mViewRoot;
     ConstraintLayout clContainer;
     PlayerSeekBarView mPlayerSeekBarView;
@@ -29,10 +38,12 @@ public class MiniPlayerView extends RelativeLayout implements IMiniPlayerView {
     ImageView imgStar;
     ImageView imgPlayerToggle;
     View mViewFakeToggle;
+
     IPlayerComponentView iPlayerComponentView;
 
     private RelativeLayout mParentContainer;
 
+    private PlayerBarLocationType mLocationLevel = PlayerBarLocationType.PLAYER_HIDDEN;
     private Artist mArtist;
     private boolean isSwipedUpPlayer;
     private int hardHeightOfTabBar;
@@ -63,6 +74,7 @@ public class MiniPlayerView extends RelativeLayout implements IMiniPlayerView {
     }
 
     private void init(Context context) {
+        hardHeightOfTabBar = AppUtils.dipToPx(getContext(), 50);
         mViewRoot = inflate(context, R.layout.partial_player_bar_view, this);
         clContainer = mViewRoot.findViewById(R.id.constraint_layout_container);
         mPlayerSeekBarView = mViewRoot.findViewById(R.id.player_seek_bar);
@@ -77,9 +89,29 @@ public class MiniPlayerView extends RelativeLayout implements IMiniPlayerView {
         eventSetup();
 
     }
+    public void setPlayerGesture(final GestureDetector gestureDetector) {
 
+        clContainer.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    //TODO: Check show Player Full Move In Up Touched
+                   // ((MainActivity) getContext()).checkShowPlayerFullMoveInUpTouched();
+                }
+                return !gestureDetector.onTouchEvent(event);
+            }
+        });
+        setGestureDetector(gestureDetector);
+    }
+
+    private void setGestureDetector(GestureDetector gestureDetector) {
+    }
+
+    public PlayerSeekBarView getPlayerSeekBarView() {
+        return mPlayerSeekBarView;
+    }
     void eventSetup() {
-        //Click to play button
+        //Click to play button with animation
         imgPlayerToggle.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -119,6 +151,42 @@ public class MiniPlayerView extends RelativeLayout implements IMiniPlayerView {
         imgPlayerToggle.setSelected(isPlay);
     }
 
+    public void setShowUpPlayerBar(boolean isShow, boolean isPopupShown, Fragment fragment) {
+        if(mParentContainer==null){
+            throw  new RuntimeException("Player bar parent container must not be null");
+        }
+
+        if(isShow){
+            mIsShowing=true;
+            mPlayerSeekBarView.updatePrimaryProgressBar(0);
+            mParentContainer.setVisibility(VISIBLE);
+            updatePlayerPlaceLevel(isPopupShown, fragment);
+        } else {
+            mIsShowing = false;
+            int height;
+            if(getHeight()>0){
+                height = getHeight();
+            } else {
+                height = ESTIMATE_DEFAULT_HEIGHT;
+            }
+
+            mParentContainer.animate().translationY(height).setInterpolator(
+                    new AccelerateInterpolator(SCROLL_ACCELERATION)).withEndAction(new Runnable() {
+                @Override
+                public void run() {
+                    mParentContainer.setVisibility(GONE);
+                }
+            }).start();
+        }
+    }
+
+    boolean inTriggerAction =false;
+    int count = 0;
+
+    public void updatePlayerPlaceLevel(final boolean isPopupFrameShown, final Fragment fragment) {
+
+    }
+
     /**
      * update name Artist, name fes, name Music
      * update image Artist
@@ -132,6 +200,13 @@ public class MiniPlayerView extends RelativeLayout implements IMiniPlayerView {
                 .load(song.getImage())
                 .apply((new RequestOptions()).error(R.drawable.img_artist))
                 .into(imgPlayerBar);
+    }
+
+    /**
+     * position and status of MiniPlayer
+     */
+    public enum PlayerBarLocationType {
+        PLAYER_PLACE_BOTTOM, PLAYER_PLACE_UPPER_TABBAR, PLAYER_HIDDEN
     }
 
     interface IMiniPlayerListener extends IBasePlayer {
