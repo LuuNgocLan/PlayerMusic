@@ -12,6 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.lanltn.musicplayerservice.R;
 import com.lanltn.musicplayerservice.model.Artist;
 import com.lanltn.musicplayerservice.model.Song;
@@ -107,12 +108,12 @@ public class PlayerSlideShowAdapter extends RecyclerView.Adapter<PlayerSlideShow
 
         public void bindView(int position, Song song) {
             mPosition = position;
-            mArtist = song.getmArtist();
 
             Glide.with(mContext)
-                    .load(mArtist.getmImageUrl())
+                    .load(song.getImage())
+                    .apply(new RequestOptions().error(R.drawable.img_artist))
                     .into(imgBackground);
-            txtTitle.setText(song.getmTitle());
+            txtTitle.setText(song.getName());
         }
 
         public void setListener(ISlideShowViewHolderListener mListener) {

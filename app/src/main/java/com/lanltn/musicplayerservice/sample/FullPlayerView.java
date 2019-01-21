@@ -3,19 +3,20 @@ package com.lanltn.musicplayerservice.sample;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.transition.AutoTransition;
+import android.transition.Transition;
+import android.transition.TransitionManager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.lanltn.musicplayerservice.MainActivity;
 import com.lanltn.musicplayerservice.R;
 import com.lanltn.musicplayerservice.adapter.PlayerSlideShowAdapter;
 import com.lanltn.musicplayerservice.adapter.PlaylistArtistAdapter;
@@ -32,7 +33,7 @@ public class FullPlayerView extends RelativeLayout
         implements
         IFullPlayerView,
         PlayerSlideShowAdapter.ISlideShowViewHolderListener,
-        PlaylistArtistAdapter.IPlayListViewHolderListener {
+        PlaylistArtistAdapter.IPlayListViewHolderListener, Transition.TransitionListener {
 
     View mViewRoot;
     ConstraintLayout clContainer;
@@ -60,6 +61,7 @@ public class FullPlayerView extends RelativeLayout
     View artistPlayView;
     ImageView imgViewClose;
 
+    private ConstraintSet mConstraintSetContainer = new ConstraintSet();
     private IPlayerComponentView iPlayerComponentView;
     private PlayerSlideShowAdapter mPlayerSlideShowAdapter;
     private PlaylistArtistAdapter mPlaylistArtistAdapter;
@@ -67,6 +69,10 @@ public class FullPlayerView extends RelativeLayout
 
     private int mLastPage;
     private boolean mIsShowSlide = true;
+    private boolean mIsArtistPlayer;
+    private boolean isHiddenPlaylist;
+    private int maxPaddingBottomController;
+    private int heightPlaylistHidingStage = 0;
 
     public void setiPlayerComponentView(IPlayerComponentView iPlayerComponentView) {
         this.iPlayerComponentView = iPlayerComponentView;
@@ -122,14 +128,31 @@ public class FullPlayerView extends RelativeLayout
         mLinearLayoutPlaylist = mViewRoot.findViewById(R.id.player_full_linear_playlist);
         artistPlayView = mViewRoot.findViewById(R.id.artist_view_play);
         imgViewClose = mViewRoot.findViewById(R.id.image_view_close);
+        calculateMaxPadding();
     }
 
     private void initPlayListArtist() {
+        mPlayerRecyclerView.setLayoutManager(
+                new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         mPlaylistArtistAdapter = new PlaylistArtistAdapter(getContext(), mListSong);
         mPlaylistArtistAdapter.setmViewHolderListener(this);
         mPlayerRecyclerView.setAdapter(mPlaylistArtistAdapter);
     }
 
+    private void calculateMaxPadding() {
+        if (maxPaddingBottomController == 0) {
+            mConstraintSetContainer.clone(clContainer);
+            heightPlaylistHidingStage = (int) getResources().getDimension(R.dimen.pl10_padding_bottom);
+            mClController.post(new Runnable() {
+                @Override
+                public void run() {
+                    float heightHeader = getResources().getDimension(R.dimen.standard_height_bar);
+                    float heightController = mClController.getHeight();
+                    maxPaddingBottomController = (int) (ScreenUtils.getScreenHeight(getContext()) - heightHeader - heightController);
+                }
+            });
+        }
+    }
 
     private void initSlideShow() {
         mPlayerSlideShowAdapter = new PlayerSlideShowAdapter(getContext(), mListSong);
@@ -176,15 +199,49 @@ public class FullPlayerView extends RelativeLayout
         mLinearLayoutPlaylist.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                mLinearLayoutPlaylist.setEnabled(false);
+                mPlaylistArtistAdapter.notifyDataSetChanged();
                 Toast.makeText(getContext(), "GONE Slide: " + mIsShowSlide, Toast.LENGTH_SHORT).show();
                 mIsShowSlide = !mIsShowSlide;
-                if (mIsShowSlide) {
-                    mSlideShowPlayer.setVisibility(VISIBLE);
-                } else {
-                    mSlideShowPlayer.setVisibility(GONE);
-                }
+                setHidePlaylist(mIsShowSlide);
             }
         });
+    }
+
+    private void setHidePlaylist(boolean isHidden) {
+        AutoTransition transition = new AutoTransition();
+        transition.addListener(this);
+        transition.excludeChildren(mPlayerRecyclerView, true);
+        if (!isHidden) {
+            mTxtPlayList.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_arrow_down_white_small, 0);
+            mConstraintSetContainer.connect(R.id.player_full_linear_layout_buttons, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, 0);
+
+//            mConstraintSetContainer.connect(R.id.player_contraint_layout_controller, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, maxPaddingBottomController);
+            mConstraintSetContainer.clear(R.id.player_contraint_layout_controller, ConstraintSet.BOTTOM);
+            mConstraintSetContainer.connect(R.id.player_contraint_layout_controller, ConstraintSet.TOP, R.id.player_constraint_layout_header, ConstraintSet.BOTTOM, 0);
+
+            TransitionManager.beginDelayedTransition(clContainer, transition);
+            mConstraintSetContainer.applyTo(clContainer);
+
+            //check if artist
+            if (mIsArtistPlayer) {
+                mImgFavouriteBody.setVisibility(VISIBLE);
+            } else {
+                mImgFavouriteBody.setVisibility(GONE);
+            }
+        } else {
+            int maxMarginButton = (int) getResources().getDimension(R.dimen.standard_height_bar);
+            mTxtPlayList.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_arrow_up_white_small, 0);
+
+            mConstraintSetContainer.clear(R.id.player_contraint_layout_controller, ConstraintSet.TOP);
+            mConstraintSetContainer.connect(R.id.player_contraint_layout_controller, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, heightPlaylistHidingStage);
+
+            mConstraintSetContainer.connect(R.id.player_full_linear_layout_buttons, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, maxMarginButton);
+            TransitionManager.beginDelayedTransition(clContainer, transition);
+            mConstraintSetContainer.applyTo(clContainer);
+            mImgFavouriteBody.setVisibility(GONE);
+        }
+        isHiddenPlaylist = isHidden;
     }
 
     private void showFullPlayer() {
@@ -198,6 +255,31 @@ public class FullPlayerView extends RelativeLayout
 
     @Override
     public void onClickThumbnail(int position) {
+
+    }
+
+    @Override
+    public void onTransitionStart(Transition transition) {
+        mLinearLayoutPlaylist.setEnabled(false);
+    }
+
+    @Override
+    public void onTransitionEnd(Transition transition) {
+        mLinearLayoutPlaylist.setEnabled(true);
+    }
+
+    @Override
+    public void onTransitionCancel(Transition transition) {
+
+    }
+
+    @Override
+    public void onTransitionPause(Transition transition) {
+
+    }
+
+    @Override
+    public void onTransitionResume(Transition transition) {
 
     }
 

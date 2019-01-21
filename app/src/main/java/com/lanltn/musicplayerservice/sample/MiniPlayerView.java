@@ -100,7 +100,6 @@ public class MiniPlayerView extends RelativeLayout implements IMiniPlayerView {
                 mIsPlaying = !mIsPlaying;
                 iPlayerComponentView.setStatusPlayer(mIsPlaying);
                 setSelectedTogglePlayerView(mIsPlaying);
-                setSongInfo(new Song());
                 iPlayerComponentView.onPlayingMusic();
 
             }
@@ -125,18 +124,14 @@ public class MiniPlayerView extends RelativeLayout implements IMiniPlayerView {
      * update image Artist
      */
     public void setSongInfo(Song song) {
-        txtPlayerBarTitle.setText(song.getmTitle());
-        Artist artist = song.getmArtist();
-        if (artist != null) {
-            mArtist = artist;
-            txtPlayerBarSubTitle.setText(artist.getmNameArtist());
+        txtPlayerBarTitle.setText(song.getName());
+        txtPlayerBarSubTitle.setText(song.getArtistName());
 
-            Glide
-                    .with(getContext())
-                    .load(artist.getmImageUrl())
-                    .apply((new RequestOptions()).error(R.drawable.img_artist))
-                    .into(imgPlayerBar);
-        }
+        Glide
+                .with(getContext())
+                .load(song.getImage())
+                .apply((new RequestOptions()).error(R.drawable.img_artist))
+                .into(imgPlayerBar);
     }
 
     interface IMiniPlayerListener extends IBasePlayer {

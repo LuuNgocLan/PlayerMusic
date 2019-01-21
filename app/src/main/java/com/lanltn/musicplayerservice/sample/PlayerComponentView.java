@@ -85,7 +85,9 @@ public class PlayerComponentView extends RelativeLayout implements IPlayerCompon
         public void onServiceConnected(ComponentName name, IBinder service) {
             PlayerMusicService.MusicBinder binder = (PlayerMusicService.MusicBinder) service;
             playerMusicService = binder.getService();
-            playerMusicService.setList(songList);
+
+            //TODO: SET LIST SONG TO PLAY
+            playerMusicService.setDataSongs(getDataInputSong());
             Toast.makeText(getContext(), "SERVICE_MUSIC DATA SONGS: " + songList.size(), Toast.LENGTH_SHORT).show();
             musicBound = true;
         }

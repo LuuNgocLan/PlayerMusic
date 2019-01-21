@@ -1,51 +1,151 @@
 package com.lanltn.musicplayerservice.model;
 
-public class Song {
-    private int mId = 1;
-    private String mTitle = "Baby one more time";
-    private String mSongUrl = "https://p.scdn.co/mp3-preview/5819b17392b4c33276809c5bce01fe259f2516ce?cid=73c8b632d25b48b3b537832fb728dc29";
-    private Artist mArtist = new Artist(1,"britney spears","http://3.bp.blogspot.com/-mCZgOUR7yRo/U-6EmDdXbyI/AAAAAAAAAF8/nKWKkNrgFJU/s1600/Britney%2Bspears.jpg");
+import android.os.Parcel;
+import android.os.Parcelable;
 
-    public Artist getmArtist() {
-        return mArtist;
+import com.google.gson.annotations.SerializedName;
+
+public class Song implements Parcelable {
+    public static final int SONG_CHOOSE_PLAY = 2;
+    public static final int SONG_CHOOSE_PAUSE = 1;
+    public static final int SONG_NOT_CHOOSE = 0;
+
+    private String id;
+    private String name;
+    @SerializedName("preview_url")
+    private String url;
+    @SerializedName("duration_ms")
+    private double duration;
+
+    private int artistId;
+    private String image;
+    private String artistName;
+    private int statusPlay;
+    private int mCountTrack;
+
+    public Song(Parcel in) {
+        id = in.readString();
+        name = in.readString();
+        url = in.readString();
+        duration = in.readDouble();
+        artistId = in.readInt();
+        image = in.readString();
+        artistName = in.readString();
+        statusPlay = in.readInt();
+        mCountTrack = in.readInt();
     }
 
-    public void setmArtist(Artist mArtist) {
-        this.mArtist = mArtist;
+    public Song(String id, String name, String url, double duration, int artistId, String image, String artistName, int statusPlay, int mCountTrack) {
+        this.id = id;
+        this.name = name;
+        this.url = url;
+        this.duration = duration;
+        this.artistId = artistId;
+        this.image = image;
+        this.artistName = artistName;
+        this.statusPlay = statusPlay;
+        this.mCountTrack = mCountTrack;
     }
 
-    public int getmId() {
-        return mId;
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(name);
+        dest.writeString(url);
+        dest.writeDouble(duration);
+        dest.writeInt(artistId);
+        dest.writeString(image);
+        dest.writeString(artistName);
+        dest.writeInt(statusPlay);
+        dest.writeInt(mCountTrack);
     }
 
-    public void setmId(int mId) {
-        this.mId = mId;
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
-    public String getmTitle() {
-        return mTitle;
+    public static final Creator<Song> CREATOR = new Creator<Song>() {
+        @Override
+        public Song createFromParcel(Parcel in) {
+            return new Song(in);
+        }
+
+        @Override
+        public Song[] newArray(int size) {
+            return new Song[size];
+        }
+    };
+
+    public String getId() {
+        return id;
     }
 
-    public void setmTitle(String mTitle) {
-        this.mTitle = mTitle;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public String getmSongUrl() {
-        return mSongUrl;
+    public String getName() {
+        return name;
     }
 
-    public void setmSongUrl(String mSongUrl) {
-        this.mSongUrl = mSongUrl;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public Song() {
+    public String getUrl() {
+        return url;
     }
 
-    public Song(int mId, String mTitle, String mSongUrl, Artist mArtist) {
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
-        this.mId = mId;
-        this.mTitle = mTitle;
-        this.mSongUrl = mSongUrl;
-        this.mArtist = mArtist;
+    public double getDuration() {
+        return duration;
+    }
+
+    public void setDuration(double duration) {
+        this.duration = duration;
+    }
+
+    public int getArtistId() {
+        return artistId;
+    }
+
+    public void setArtistId(int artistId) {
+        this.artistId = artistId;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getArtistName() {
+        return artistName;
+    }
+
+    public void setArtistName(String artistName) {
+        this.artistName = artistName;
+    }
+
+    public int getStatusPlay() {
+        return statusPlay;
+    }
+
+    public void setStatusPlay(int statusPlay) {
+        this.statusPlay = statusPlay;
+    }
+
+    public int getmCountTrack() {
+        return mCountTrack;
+    }
+
+    public void setmCountTrack(int mCountTrack) {
+        this.mCountTrack = mCountTrack;
     }
 }

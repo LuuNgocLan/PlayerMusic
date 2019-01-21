@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.lanltn.musicplayerservice.R;
 import com.lanltn.musicplayerservice.model.Artist;
 import com.lanltn.musicplayerservice.model.Song;
@@ -92,15 +93,13 @@ public class PlaylistArtistAdapter extends RecyclerView.Adapter<PlaylistArtistAd
         public void bindView(int position, Song song) {
             mPosition = position;
             if (song != null) {
-                mArtist = song.getmArtist();
-                if (mArtist != null) {
 
-                    Glide.with(mContext)
-                            .load(mArtist.getmImageUrl())
-                            .into(mImgArtist);
-                    mTxtSubTitle.setText(mArtist.getmNameArtist());
-                }
-                mTxtTitle.setText(song.getmTitle());
+                Glide.with(mContext)
+                        .load(song.getImage())
+                        .apply((new RequestOptions()).error(R.drawable.img_artist))
+                        .into(mImgArtist);
+                mTxtSubTitle.setText(song.getArtistName());
+                mTxtTitle.setText(song.getName());
             }
         }
 
