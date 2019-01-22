@@ -17,6 +17,12 @@ public interface IPlayerComponentView {
 
     void onStopMusic();
 
+    void onPlayNextSong();
+
+    void onPlayPreviousSong();
+
+    void executePlayerWithIndex(int indexSong);
+
     boolean getStatusPlayer();
 
     void setStatusPlayer(boolean isPlaying);

@@ -89,6 +89,7 @@ public class MiniPlayerView extends RelativeLayout implements IMiniPlayerView {
         eventSetup();
 
     }
+
     public void setPlayerGesture(final GestureDetector gestureDetector) {
 
         clContainer.setOnTouchListener(new View.OnTouchListener() {
@@ -96,7 +97,7 @@ public class MiniPlayerView extends RelativeLayout implements IMiniPlayerView {
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     //TODO: Check show Player Full Move In Up Touched
-                   // ((MainActivity) getContext()).checkShowPlayerFullMoveInUpTouched();
+                    // ((MainActivity) getContext()).checkShowPlayerFullMoveInUpTouched();
                 }
                 return !gestureDetector.onTouchEvent(event);
             }
@@ -110,13 +111,12 @@ public class MiniPlayerView extends RelativeLayout implements IMiniPlayerView {
     public PlayerSeekBarView getPlayerSeekBarView() {
         return mPlayerSeekBarView;
     }
+
     void eventSetup() {
         //Click to play button with animation
         imgPlayerToggle.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Toast.makeText(getContext(), "Button Play was clicked!", Toast.LENGTH_SHORT).show();
 
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -132,7 +132,12 @@ public class MiniPlayerView extends RelativeLayout implements IMiniPlayerView {
                 mIsPlaying = !mIsPlaying;
                 iPlayerComponentView.setStatusPlayer(mIsPlaying);
                 setSelectedTogglePlayerView(mIsPlaying);
-                iPlayerComponentView.onPlayingMusic();
+
+                if (mIsPlaying) {
+                    iPlayerComponentView.onPlayingMusic();
+                } else {
+                    iPlayerComponentView.onPauseMusic();
+                }
 
             }
         });
@@ -152,19 +157,19 @@ public class MiniPlayerView extends RelativeLayout implements IMiniPlayerView {
     }
 
     public void setShowUpPlayerBar(boolean isShow, boolean isPopupShown, Fragment fragment) {
-        if(mParentContainer==null){
-            throw  new RuntimeException("Player bar parent container must not be null");
+        if (mParentContainer == null) {
+            throw new RuntimeException("Player bar parent container must not be null");
         }
 
-        if(isShow){
-            mIsShowing=true;
+        if (isShow) {
+            mIsShowing = true;
             mPlayerSeekBarView.updatePrimaryProgressBar(0);
             mParentContainer.setVisibility(VISIBLE);
             updatePlayerPlaceLevel(isPopupShown, fragment);
         } else {
             mIsShowing = false;
             int height;
-            if(getHeight()>0){
+            if (getHeight() > 0) {
                 height = getHeight();
             } else {
                 height = ESTIMATE_DEFAULT_HEIGHT;
@@ -180,7 +185,7 @@ public class MiniPlayerView extends RelativeLayout implements IMiniPlayerView {
         }
     }
 
-    boolean inTriggerAction =false;
+    boolean inTriggerAction = false;
     int count = 0;
 
     public void updatePlayerPlaceLevel(final boolean isPopupFrameShown, final Fragment fragment) {
@@ -191,7 +196,8 @@ public class MiniPlayerView extends RelativeLayout implements IMiniPlayerView {
      * update name Artist, name fes, name Music
      * update image Artist
      */
-    public void setSongInfo(Song song) {
+    @Override
+    public void setSongInfor(Song song) {
         txtPlayerBarTitle.setText(song.getName());
         txtPlayerBarSubTitle.setText(song.getArtistName());
 

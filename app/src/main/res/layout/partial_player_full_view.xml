@@ -304,12 +304,12 @@
 
                     <ImageView
                         android:id="@+id/image_view_player_toggle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="38dp"
+                        android:layout_height="42dp"
                         android:layout_gravity="center"
                         android:contentDescription="@null"
                         android:padding="12dp"
-                        app:srcCompat="@drawable/ic_play_normal" />
+                        app:srcCompat="@drawable/selector_player_full_mode_toggle" />
 
                     <View
                         android:id="@+id/artist_view_play"

@@ -1,8 +1,6 @@
 package com.lanltn.musicplayerservice.service;
 
-import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -11,21 +9,17 @@ import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Binder;
-import android.os.PowerManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.Toast;
 
-import com.lanltn.musicplayerservice.MainActivity;
-import com.lanltn.musicplayerservice.R;
 import com.lanltn.musicplayerservice.model.Artist;
 import com.lanltn.musicplayerservice.model.PlayerState;
 import com.lanltn.musicplayerservice.model.Song;
-import com.lanltn.musicplayerservice.utils.NetworkUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class PlayerMusicService extends Service implements
         MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
@@ -49,7 +43,6 @@ public class PlayerMusicService extends Service implements
 
     private MediaPlayer mPlayer;
     private List<Song> mSongs = new ArrayList<>();
-    //list song to check
     private List<Artist> mArtistList = new ArrayList<>();
     private int mSongIndexed;
     private final IBinder musicBind = new MusicBinder();
@@ -73,6 +66,7 @@ public class PlayerMusicService extends Service implements
         mPlayer = new MediaPlayer();
         isReleasedPlayer = false;
         initMusicPlayer();
+        initSongData();
     }
 
     @Override
@@ -137,6 +131,7 @@ public class PlayerMusicService extends Service implements
      * check network connection and play song
      */
     public void playSong() {
+        initSongData();
         if (isReleasedPlayer) {
             return;
         }
@@ -151,10 +146,12 @@ public class PlayerMusicService extends Service implements
             return;
         }
 
-        if (mSongs == null || mSongs.size() == 0)
+        if (mSongs == null || mSongs.size() == 0) {
             return;
+        }
         requestFocus();
         String url = mSongs.get(mSongIndexed).getUrl();
+        Log.d("SERVICE_LINK_PLAY:", mSongIndexed + " " + url);
         try {
             mPlayer.setDataSource(url);
         } catch (IOException e) {
@@ -416,5 +413,22 @@ public class PlayerMusicService extends Service implements
 
     public void setDataSongs(List<Song> songList) {
         this.mSongs = songList;
+    }
+
+    /**
+     * FAKE DATA TO CHECK MEDIA SERVICE
+     */
+
+    private void initSongData() {
+        mSongs.clear();
+        mSongs.add(new Song("1", "Baby one more time", "https://a.tumblr.com/tumblr_m75w84HcKi1qav986o1.mp3", 0.2, 1, "https://data.whicdn.com/images/267356458/original.png", "LISA", Song.SONG_CHOOSE_PLAY, 2));
+        mSongs.add(new Song("2", "DUDUDU", "https://p.scdn.co/mp3-preview/7ec5ca8cc8b98dd4dee8754912a8948a8dad83e8?cid=73c8b632d25b48b3b537832fb728dc29", 0.2, 1, "https://p.scdn.co/mp3-preview/6f93741e97573296a477f3a325c5b83e54d56c19?cid=73c8b632d25b48b3b537832fb728dc29;", "LISA", Song.SONG_CHOOSE_PLAY, 2));
+        mSongs.add(new Song("3", "Thunderlounds", "https://p.scdn.co/mp3-preview/7ec5ca8cc8b98dd4dee8754912a8948a8dad83e8?cid=73c8b632d25b48b3b537832fb728dc29", 0.2, 1, "https://photo-2-baomoi.zadn.vn/w1000_r1/2018_06_30_329_26715244/6f05eb58201ec940900f.jpg", "LISA", Song.SONG_CHOOSE_PLAY, 2));
+        mSongs.add(new Song("4", "IU", "https://p.scdn.co/mp3-preview/b29e3d5cbfe27f3ea875b2bec70d9b05b2309aa0?cid=73c8b632d25b48b3b537832fb728dc29", 0.2, 1, "https://i.pinimg.com/originals/72/93/74/72937431e02a8ddeda520d1ba0ff1f74.png", "LISA", Song.SONG_CHOOSE_PLAY, 2));
+        mSongs.add(new Song("5", "DUDUDU", "https://p.scdn.co/mp3-preview/6f93741e97573296a477f3a325c5b83e54d56c19?cid=73c8b632d25b48b3b537832fb728dc29", 0.2, 1, "https://i.pinimg.com/236x/88/0a/d0/880ad0cf9a00885e09a1a82428782fdd--bigbang-live-bigbang-gd.jpg", "LISA", Song.SONG_CHOOSE_PLAY, 2));
+        mSongs.add(new Song("6", "DUDUDU", "https://a.tumblr.com/tumblr_m75w84HcKi1qav986o1.mp3", 0.2, 1, "https://i.pinimg.com/736x/eb/30/c4/eb30c43eec3bafc8cd01774e743230f6--iu-hair-kpop-girls.jpg", "LISA", Song.SONG_CHOOSE_PLAY, 2));
+        mSongs.add(new Song("7", "DUDUDU", "https://p.scdn.co/mp3-preview/7ec5ca8cc8b98dd4dee8754912a8948a8dad83e8?cid=73c8b632d25b48b3b537832fb728dc29", 0.2, 1, "https://www.sbs.com.au/popasia/sites/sbs.com.au.popasia/files/styles/full/public/IU_eating_disorder.jpg", "LISA", Song.SONG_CHOOSE_PLAY, 2));
+        mSongs.add(new Song("8", "DUDUDU", "https://a.tumblr.com/tumblr_m75w84HcKi1qav986o1.mp3", 0.2, 1, "https://vignette.wikia.nocookie.net/kpopgirls/images/d/dd/BLACKPINK_Lisa_Square_Up_Teaser_Image.png/revision/latest?cb=20180617160645", "LISA", Song.SONG_CHOOSE_PLAY, 2));
+
     }
 }

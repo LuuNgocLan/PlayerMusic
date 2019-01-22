@@ -113,7 +113,6 @@ public class PlayerComponentView extends RelativeLayout implements IPlayerCompon
     public void onFullPlayerMode() {
         miniPlayerView.setVisibility(GONE);
         fullPlayerView.setVisibility(VISIBLE);
-        Toast.makeText(getContext(), "on Show with Full mode Player!!!", Toast.LENGTH_SHORT).show();
     }
 
 
@@ -121,7 +120,6 @@ public class PlayerComponentView extends RelativeLayout implements IPlayerCompon
     public void onMiniPlayerMode() {
         miniPlayerView.setVisibility(VISIBLE);
         fullPlayerView.setVisibility(GONE);
-        Toast.makeText(getContext(), "on Show with Mini Player!!!", Toast.LENGTH_SHORT).show();
     }
 
 
@@ -129,19 +127,38 @@ public class PlayerComponentView extends RelativeLayout implements IPlayerCompon
     public void onPlayingMusic() {
         isPlaying = true;
         playerMusicService.playSong();
-        Toast.makeText(getContext(),"Song playing!!!",Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "Song playing!!!", Toast.LENGTH_SHORT).show();
     }
 
 
     @Override
     public void onPauseMusic() {
         isPlaying = false;
+        playerMusicService.pauseSong(true);
+        Toast.makeText(getContext(), "Song paused!", Toast.LENGTH_SHORT).show();
     }
 
 
     @Override
     public void onStopMusic() {
         isPlaying = false;
+    }
+
+    @Override
+    public void onPlayNextSong() {
+        //TODO: call service to play next song
+        playerMusicService.playNextSong(true);
+    }
+
+    @Override
+    public void onPlayPreviousSong() {
+        //TODO: call service to play previuos song
+        playerMusicService.playPreviousSong();
+    }
+
+    @Override
+    public void executePlayerWithIndex(int indexSong) {
+        playerMusicService.playSongWithIndex(indexSong);
     }
 
 

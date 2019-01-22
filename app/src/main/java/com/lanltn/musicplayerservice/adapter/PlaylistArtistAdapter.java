@@ -4,7 +4,9 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.ViewUtils;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -19,6 +21,8 @@ import com.lanltn.musicplayerservice.model.Song;
 import java.util.List;
 
 import io.gresse.hugo.vumeterlibrary.VuMeterView;
+
+import static com.lanltn.musicplayerservice.utils.ViewUtils.delaySetAlphaEnable;
 
 
 public class PlaylistArtistAdapter extends RecyclerView.Adapter<PlaylistArtistAdapter.PlayerSlideViewHolder> {
@@ -57,6 +61,11 @@ public class PlaylistArtistAdapter extends RecyclerView.Adapter<PlaylistArtistAd
         this.mViewHolderListener = mViewHolderListener;
     }
 
+    public void updateAdapter(List<Song> songList) {
+        this.songList = songList;
+        notifyDataSetChanged();
+    }
+
     public class PlayerSlideViewHolder extends RecyclerView.ViewHolder {
 
         ConstraintLayout mClContainer;
@@ -90,7 +99,7 @@ public class PlaylistArtistAdapter extends RecyclerView.Adapter<PlaylistArtistAd
             mImgEqualizer = itemView.findViewById(R.id.image_equalizer);
         }
 
-        public void bindView(int position, Song song) {
+        public void bindView(final int position, Song song) {
             mPosition = position;
             if (song != null) {
 
@@ -101,6 +110,51 @@ public class PlaylistArtistAdapter extends RecyclerView.Adapter<PlaylistArtistAd
                 mTxtSubTitle.setText(song.getArtistName());
                 mTxtTitle.setText(song.getName());
             }
+            mClContainer.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mListener != null) {
+                        mListener.onClickSongRecyclerView(position);
+                    }
+                }
+            });
+
+            mClContainer.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            mClContainer.setAlpha(0.5F);
+                            break;
+                        case MotionEvent.ACTION_UP:
+                            delaySetAlphaEnable(mClContainer);
+                            if(mListener!=null){
+                                mListener.onClickSongRecyclerView(position);
+                            }
+                            mClContainer.setAlpha(1f);
+                            break;
+                        case MotionEvent.ACTION_CANCEL:
+                            delaySetAlphaEnable(mClContainer);
+                            break;
+                        case MotionEvent.ACTION_MOVE:
+                            mClContainer.setAlpha(0.5F);
+                            break;
+                    }
+                    return true;
+                }
+            });
+
+            if(song.getStatusPlay()==Song.SONG_CHOOSE_PLAY){
+                mImgEqualizer.setVisibility(View.VISIBLE);
+                mImgEqualizer.resume(true);
+            } else if(song.getStatusPlay()==song.SONG_CHOOSE_PAUSE){
+                mImgEqualizer.setVisibility(View.VISIBLE);
+                mImgEqualizer.pause();
+            } else {
+                mImgEqualizer.setVisibility(View.GONE);
+                mImgEqualizer.pause();
+            }
+
         }
 
         public void setListener(IPlayListViewHolderListener mListener) {
@@ -111,8 +165,6 @@ public class PlaylistArtistAdapter extends RecyclerView.Adapter<PlaylistArtistAd
     }
 
     public interface IPlayListViewHolderListener {
-        void onClickPlayMusic(int artistId);
-
-        void onClickThumbnail(int position);
+        void onClickSongRecyclerView(int position);
     }
 }

@@ -56,6 +56,11 @@ public class PlayerSlideShowAdapter extends RecyclerView.Adapter<PlayerSlideShow
         this.mViewHolderListener = mViewHolderListener;
     }
 
+    public void updateAdapter(List<Song> songList) {
+        this.songList = songList;
+        notifyDataSetChanged();
+    }
+
     public class PlayerSlideViewHolder extends RecyclerView.ViewHolder {
 
         ImageView imgBackground;
